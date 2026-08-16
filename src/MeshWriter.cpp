@@ -102,4 +102,94 @@ void MeshWriter::writeVTK
     cout << "Mesh exported to "
          << filename
          << endl;
+};
+
+void MeshWriter::writeVTKTriangle
+(
+    const Mesh& mesh,
+    const string& filename
+)
+{
+    ofstream file(filename);
+
+    if(!file.is_open())
+    {
+        cout << "Error opening " << filename << endl;
+        return;
+    }
+
+    //--------------------------------------------------------
+    // Header
+    //--------------------------------------------------------
+
+    file << "# vtk DataFile Version 3.0\n";
+    file << "Triangular Mesh\n";
+    file << "ASCII\n";
+    file << "DATASET UNSTRUCTURED_GRID\n\n";
+
+    //--------------------------------------------------------
+    // Points
+    //--------------------------------------------------------
+
+    file << "POINTS "
+         << mesh.getNumberOfNodes()
+         << " float\n";
+
+    for(const auto& node : mesh.nodes)
+    {
+        file << node.x
+             << " "
+             << node.y
+             << " "
+             << 0.0
+             << "\n";
+    }
+
+    file << "\n";
+
+    //--------------------------------------------------------
+    // Cells
+    //--------------------------------------------------------
+    
+    int nTriangles = mesh.getNumberOfTriangles();
+
+    file << "CELLS "
+         << nTriangles
+         << " "
+         << nTriangles*4
+         << "\n";
+
+    for(const auto& triangle : mesh.triangles)
+    {
+        file << "3 ";
+
+        for(int node : triangle.nodeIDs)
+        {
+            file << node << " ";
+        }
+
+        file << "\n";
+    }
+
+    file << "\n";
+
+    //--------------------------------------------------------
+    // Cell Types
+    //--------------------------------------------------------
+
+    file << "CELL_TYPES "
+         << nTriangles
+         << "\n";
+
+    for(int i=0;i<nTriangles;i++)
+    {
+        file << "5\n";
+    }
+
+    file.close();
+
+    cout << "\n";
+    cout << "Mesh exported to "
+         << filename
+         << endl;
 }

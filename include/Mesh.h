@@ -5,6 +5,7 @@
 
 #include "Point.h"
 #include "Cell.h"
+#include "VTKTriangle.h"
 #include "Surface.h"
 
 class Mesh
@@ -17,6 +18,7 @@ public:
 
     std::vector<Point> nodes;
     std::vector<Cell> cells;
+    std::vector<VTKTriangle> triangles;
 
     double xmin;
     double xmax;
@@ -54,6 +56,12 @@ public:
     int getNumberOfNodes() const;
 
     int getNumberOfCells() const;
+
+    int getNumberOfTriangles() const;
+
+    void splitIntoTriangles();
+    double triangleArea(int n1, int n2, int n3) const;
+    //Needed to split cells into triangles 
 
 protected:
 

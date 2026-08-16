@@ -1,6 +1,7 @@
 /*
-Compiling Instruction: g++ 01_CartesianMesh.cpp src/*.cpp -Iinclude -std=c++17 -o cartesianMesh && ./cartesianMesh
+Compiler instruction: g++ 05_TriangularMeshExport.cpp src/*.cpp -Iinclude -std=c++17 -o TriangularMeshExport && ./TriangularMeshExport
 */
+
 #include <iostream>
 
 #include "Point.h"
@@ -14,12 +15,8 @@ Compiling Instruction: g++ 01_CartesianMesh.cpp src/*.cpp -Iinclude -std=c++17 -
 int main()
 {
     std::cout << "==========================================" << std::endl;
-    std::cout << " Example 01 : Cartesian Mesh Generation" << std::endl;
+    std::cout << " Example 05 : Triangular Mesh Export" << std::endl;
     std::cout << "==========================================" << std::endl;
-
-    //------------------------------------------------------------
-    // Step 1 : Create Geometry
-    //------------------------------------------------------------
 
     Point p0(0,0.0,0.0);
     Point p1(1,4.0,0.0);
@@ -61,6 +58,7 @@ int main()
         100      // Ny
     );
 
+    mesh.splitIntoTriangles();
     //------------------------------------------------------------
     // Step 3 : Print Mesh Statistics
     //------------------------------------------------------------
@@ -71,10 +69,15 @@ int main()
     // Step 4 : Export Mesh
     //------------------------------------------------------------
 
-    MeshWriter::writeVTK
+    MeshWriter::writeVTKTriangle
     (
         mesh,
-        "cartesianMesh.vtk"
+        "triangularSplit.vtk"
     );
     return 0;
-}
+
+
+
+
+
+};

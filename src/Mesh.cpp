@@ -195,6 +195,15 @@ int Mesh::getNumberOfCells() const
 }
 
 //------------------------------------------------------------//
+// Number of triangles
+//------------------------------------------------------------//
+
+int Mesh::getNumberOfTriangles() const
+{
+    return static_cast<int>(triangles.size());
+}
+
+//------------------------------------------------------------//
 // Compute Bounding Box from Mesh Nodes
 //------------------------------------------------------------//
 
@@ -219,3 +228,64 @@ void Mesh::computeBoundingBox()
         ymax = std::max(ymax, node.y);
     }
 }
+
+void Mesh::splitIntoTriangles(){
+
+    triangles.clear();
+
+    triangles.reserve(2*Nx*Ny);
+
+    int id = 0;
+
+    int diagNode1,diagNode2;
+    std::vector<int> offDiagonalNodes;
+    double area1,area2;
+
+    for(const auto& cell:cells)
+    {
+       //Identify a diagonal of the cell
+       diagNode1=0; //Let's say we want a diagonal starting on node 0
+       //We need to find which node is the other end of the triangle
+       //We want this to work even if the user does not input the nodes of a cell
+       //in a specific order
+
+       offDiagonalNodes.clear();
+       offDiagonalNodes.push_back(1);
+       offDiagonalNodes.push_back(2);
+       offDiagonalNodes.push_back(3);
+
+       for(int i=1;i<=3;i++){
+          diagNode2=i;
+          offDiagonalNodes.erase(offDiagonalNodes.begin()+i-1);
+          area1=triangleArea(cell.nodeIDs[diagNode1],cell.nodeIDs[diagNode2],cell.nodeIDs[offDiagonalNodes[0]]);
+          area2=triangleArea(cell.nodeIDs[diagNode1],cell.nodeIDs[diagNode2],cell.nodeIDs[offDiagonalNodes[1]]);
+
+          if(area1*area2<0.0) break;
+
+          offDiagonalNodes.insert(offDiagonalNodes.begin()+i-1,i);
+
+       };
+
+       triangles.emplace_back(id,cell.nodeIDs[diagNode1],cell.nodeIDs[diagNode2],cell.nodeIDs[offDiagonalNodes[0]]);
+       id=id+1;
+       triangles.emplace_back(id,cell.nodeIDs[diagNode1],cell.nodeIDs[diagNode2],cell.nodeIDs[offDiagonalNodes[1]]);
+       id=id+1;
+
+    }
+
+};
+
+double Mesh::triangleArea(int n1, int n2, int n3) const{
+
+       double x1,x2,y1,y2;
+
+       x1=nodes[n2].x-nodes[n1].x;
+       x2=nodes[n3].x-nodes[n1].x;
+
+       y1=nodes[n2].y-nodes[n1].y;
+       y2=nodes[n3].y-nodes[n1].y;
+
+       return x1*y2-y1*x2; 
+
+};
+

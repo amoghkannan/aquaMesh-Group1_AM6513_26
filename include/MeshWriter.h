@@ -16,6 +16,12 @@ public:
         const std::string& filename
     );
 
+    static void writeVTKTriangle
+    (
+        const Mesh& mesh,
+        const std::string& filename
+    );
+
 };
 
 #endif
