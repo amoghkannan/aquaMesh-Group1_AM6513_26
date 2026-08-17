@@ -59,9 +59,9 @@ int main(){
 	config.motionType="circular";
 	config.vx=0.5;
 	config.vy=0.2;
-	int totalFrames=50;
-        config.xc=0.0;
-        config.yc=0.0;
+	int totalFrames=200;
+        config.xc=1.0;
+        config.yc=1.0;
         config.omega=5.0;
 	double dt=0.1;
 
