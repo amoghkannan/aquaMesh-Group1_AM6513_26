@@ -45,6 +45,29 @@ Mesh::Mesh()
     isTriangle=false;
 }
 
+Mesh::Mesh(const Mesh& meshOG){
+        nodes = meshOG.nodes;
+        
+        isTriangle = meshOG.isTriangle;
+        
+        xmin = meshOG.xmin;
+        xmax = meshOG.xmax;
+        ymin = meshOG.ymin;
+        ymax = meshOG.ymax;
+
+        Nx = meshOG.Nx;
+        Ny = meshOG.Ny;
+
+        dx = meshOG.dx;
+        dy = meshOG.dy;
+
+        cells.resize(meshOG.cells.size());
+
+        for(int i=0;i<meshOG.cells.size();i++){
+                cells[i] = new Cell;
+                *cells[i]= *meshOG.cells[i];
+        };
+};
 
 //------------------------------------------------------------//
 // Compute Bounding Box
@@ -130,7 +153,7 @@ void Mesh::generateCells()
 
             int n3 = n0+(Nx+1);
 
-            cells.push_back(std::make_shared<Cell>(id,n0,n1,n2,n3));
+            cells.push_back(new Cell(id,n0,n1,n2,n3));
 
             id++;
         }
@@ -217,8 +240,8 @@ void Mesh::computeBoundingBox()
 
 void Mesh::splitIntoTriangles(){
 
-    std::shared_ptr<VTKTriangle> triangle1;
-    std::shared_ptr<VTKTriangle> triangle2;
+    VTKTriangle* triangle1;
+    VTKTriangle* triangle2;
     int nCells=getNumberOfCells();
     int nTriangles=2*nCells;
 
@@ -255,16 +278,16 @@ void Mesh::splitIntoTriangles(){
 
        };
 
-       triangle1=std::make_shared<VTKTriangle>(id,cells[j]->nodeIDs[diagNode1],cells[j]->nodeIDs[diagNode2],
+       triangle1=new VTKTriangle(id,cells[j]->nodeIDs[diagNode1],cells[j]->nodeIDs[diagNode2],
                                     cells[j]->nodeIDs[offDiagonalNodes[0]]);
 
        id=id+1;
 
-       triangle2=std::make_shared<VTKTriangle>(id,cells[j]->nodeIDs[diagNode1],cells[j]->nodeIDs[diagNode2],
+       triangle2=new VTKTriangle(id,cells[j]->nodeIDs[diagNode1],cells[j]->nodeIDs[diagNode2],
                                     cells[j]->nodeIDs[offDiagonalNodes[1]]);
        id=id+1;
 
-       cells[j].reset(); 
+       delete cells[j]; 
        cells[j]=triangle1;
        cells.push_back(triangle2);
 
@@ -291,5 +314,9 @@ double Mesh::triangleArea(int n1, int n2, int n3) const{
 
 Mesh::~Mesh(){
 
+        for(auto& cell:cells){
+                delete cell;
+                cell=nullptr;
+        };
 
 };

@@ -18,7 +18,7 @@ public:
     //--------------------------------------------------
 
     std::vector<Point> nodes;
-    std::vector<std::shared_ptr<Cell>> cells;
+    std::vector<Cell*> cells;
     bool isTriangle; //After triangle cell split, will be true
 
     double xmin;
@@ -38,6 +38,7 @@ public:
     //--------------------------------------------------
 
     Mesh();
+    Mesh(const Mesh&);
 
     //--------------------------------------------------
     // Mesh Generation

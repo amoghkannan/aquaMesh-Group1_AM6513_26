@@ -25,6 +25,8 @@ void MultiBlockMesh::generate()
     int globalNodeID = 0;
     int globalCellID = 0;
 
+    Cell* tempCell;
+
     //----------------------------------------------------
     // Loop over all blocks
     //----------------------------------------------------
@@ -60,14 +62,17 @@ void MultiBlockMesh::generate()
 
         for(auto cell : block.mesh.cells)
         {
-            cell->id = globalCellID++;
+            tempCell=new Cell;
+            *tempCell=*cell;
 
-            for(auto& nodeID : cell->nodeIDs)
+            tempCell->id = globalCellID++;
+
+            for(auto& nodeID : tempCell->nodeIDs)
             {
                 nodeID += nodeOffset;
             }
 
-            cells.push_back(cell);
+            cells.push_back(tempCell);
         }
     }
 

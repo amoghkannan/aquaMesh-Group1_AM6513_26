@@ -175,7 +175,7 @@ int main()
     // Last Cell
     //--------------------------------------------------------
 
-    std::shared_ptr<Cell> last = mesh.cells.back();
+    Cell* last = mesh.cells.back();
 
     test.expectTrue(last->id == 199,
                     "Last Cell ID");
