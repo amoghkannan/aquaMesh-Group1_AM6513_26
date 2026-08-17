@@ -108,6 +108,8 @@ int main()
     MeshTransformation::rotate
     (
         rotatedMesh,
+        0.0,
+        0.0,
         30.0
     );
 

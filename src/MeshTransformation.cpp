@@ -59,6 +59,8 @@ void MeshTransformation::scale
 void MeshTransformation::rotate
 (
     Mesh& mesh,
+    double xc,
+    double yc,
     double angleDeg
 )
 {
@@ -69,11 +71,11 @@ void MeshTransformation::rotate
 
     for(auto& node : mesh.nodes)
     {
-        double x = node.x;
-        double y = node.y;
+        double x = node.x - xc;
+        double y = node.y - yc;
 
-        node.x = c*x - s*y;
-        node.y = s*x + c*y;
+        node.x = xc + c*x - s*y;
+        node.y = yc + s*x + c*y;
     }
 }
 

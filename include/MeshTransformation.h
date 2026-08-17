@@ -21,6 +21,8 @@ public:
     static void rotate
     (
         Mesh& mesh,
+        double xc,
+        double yc,
         double angleDeg
     );
 

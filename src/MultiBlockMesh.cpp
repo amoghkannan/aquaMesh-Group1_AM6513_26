@@ -70,6 +70,7 @@ void MultiBlockMesh::generate()
             cells.push_back(cell);
         }
     }
+
     //----------------------------------------------------
     // Compute Global Bounding Box
     //----------------------------------------------------
@@ -98,4 +99,42 @@ MultiBlockMesh::~MultiBlockMesh(){
 
 };
 
+void MultiBlockMesh::generate(const OversetConfig& config, double dt){
+        if (config.overset){
 
+
+                if (config.motionType!="linear"&& config.motionType!="circular")
+                {
+                        throw std::invalid_argument("Error:Invalid motion type");
+		};
+
+                if (config.fineMeshIdx<0 || config.fineMeshIdx > blocks.size()-1)
+                {
+                        throw std::invalid_argument("Error:Invalid index of fine mesh");
+		};
+
+                if(config.motionType=="linear"){
+                        MeshTransformation::translate(blocks[config.fineMeshIdx].mesh,config.vx*dt,config.vy*dt);
+                };
+
+                if(config.motionType=="circular"){
+                        MeshTransformation::rotate(blocks[config.fineMeshIdx].mesh,config.xc,config.yc,config.omega*dt);
+                };
+
+                
+                int globalNodeOffset=0;
+
+                for(int i=0;i<config.fineMeshIdx;i++){
+                        globalNodeOffset=globalNodeOffset+blocks[i].mesh.nodes.size();
+
+                };
+
+                int meshNodeCount=blocks[config.fineMeshIdx].mesh.getNumberOfNodes();
+
+                for(int i=0;i<meshNodeCount;i++){
+                        nodes[i+globalNodeOffset].x = blocks[config.fineMeshIdx].mesh.nodes[i].x;
+                        nodes[i+globalNodeOffset].y = blocks[config.fineMeshIdx].mesh.nodes[i].y;
+                };
+        };
+
+};
