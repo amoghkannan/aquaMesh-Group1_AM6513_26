@@ -20,7 +20,8 @@ public:
         int n3,
         int n4);
 
-    void print() const;
+    virtual void print() const;
+    virtual ~Cell() {}; //Virtual destructor
 };
 
 #endif

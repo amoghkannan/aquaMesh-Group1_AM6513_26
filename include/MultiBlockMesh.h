@@ -18,6 +18,8 @@ public:
 
     void generate();
 
+    virtual ~MultiBlockMesh();
+
 };
 
 #endif

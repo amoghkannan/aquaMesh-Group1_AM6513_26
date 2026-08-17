@@ -41,6 +41,8 @@ Mesh::Mesh()
 
     dx = 0.0;
     dy = 0.0;
+
+    isTriangle=false;
 }
 
 
@@ -128,14 +130,7 @@ void Mesh::generateCells()
 
             int n3 = n0+(Nx+1);
 
-            cells.emplace_back
-            (
-                id,
-                n0,
-                n1,
-                n2,
-                n3
-            );
+            cells.push_back(std::make_shared<Cell>(id,n0,n1,n2,n3));
 
             id++;
         }
@@ -195,15 +190,6 @@ int Mesh::getNumberOfCells() const
 }
 
 //------------------------------------------------------------//
-// Number of triangles
-//------------------------------------------------------------//
-
-int Mesh::getNumberOfTriangles() const
-{
-    return static_cast<int>(triangles.size());
-}
-
-//------------------------------------------------------------//
 // Compute Bounding Box from Mesh Nodes
 //------------------------------------------------------------//
 
@@ -231,9 +217,12 @@ void Mesh::computeBoundingBox()
 
 void Mesh::splitIntoTriangles(){
 
-    triangles.clear();
+    std::shared_ptr<VTKTriangle> triangle1;
+    std::shared_ptr<VTKTriangle> triangle2;
+    int nCells=getNumberOfCells();
+    int nTriangles=2*nCells;
 
-    triangles.reserve(2*Nx*Ny);
+    cells.reserve(nTriangles);
 
     int id = 0;
 
@@ -241,7 +230,7 @@ void Mesh::splitIntoTriangles(){
     std::vector<int> offDiagonalNodes;
     double area1,area2;
 
-    for(const auto& cell:cells)
+    for(int j=0;j<nCells;j++)
     {
        //Identify a diagonal of the cell
        diagNode1=0; //Let's say we want a diagonal starting on node 0
@@ -257,8 +246,8 @@ void Mesh::splitIntoTriangles(){
        for(int i=1;i<=3;i++){
           diagNode2=i;
           offDiagonalNodes.erase(offDiagonalNodes.begin()+i-1);
-          area1=triangleArea(cell.nodeIDs[diagNode1],cell.nodeIDs[diagNode2],cell.nodeIDs[offDiagonalNodes[0]]);
-          area2=triangleArea(cell.nodeIDs[diagNode1],cell.nodeIDs[diagNode2],cell.nodeIDs[offDiagonalNodes[1]]);
+          area1=triangleArea(cells[j]->nodeIDs[diagNode1],cells[j]->nodeIDs[diagNode2],cells[j]->nodeIDs[offDiagonalNodes[0]]);
+          area2=triangleArea(cells[j]->nodeIDs[diagNode1],cells[j]->nodeIDs[diagNode2],cells[j]->nodeIDs[offDiagonalNodes[1]]);
 
           if(area1*area2<0.0) break;
 
@@ -266,13 +255,24 @@ void Mesh::splitIntoTriangles(){
 
        };
 
-       triangles.emplace_back(id,cell.nodeIDs[diagNode1],cell.nodeIDs[diagNode2],cell.nodeIDs[offDiagonalNodes[0]]);
+       triangle1=std::make_shared<VTKTriangle>(id,cells[j]->nodeIDs[diagNode1],cells[j]->nodeIDs[diagNode2],
+                                    cells[j]->nodeIDs[offDiagonalNodes[0]]);
+
        id=id+1;
-       triangles.emplace_back(id,cell.nodeIDs[diagNode1],cell.nodeIDs[diagNode2],cell.nodeIDs[offDiagonalNodes[1]]);
+
+       triangle2=std::make_shared<VTKTriangle>(id,cells[j]->nodeIDs[diagNode1],cells[j]->nodeIDs[diagNode2],
+                                    cells[j]->nodeIDs[offDiagonalNodes[1]]);
        id=id+1;
+
+       cells[j].reset(); 
+       cells[j]=triangle1;
+       cells.push_back(triangle2);
 
     }
 
+    isTriangle=true;
+
+    cout<< "\nSplit mesh cells into triangles"<<endl;
 };
 
 double Mesh::triangleArea(int n1, int n2, int n3) const{
@@ -289,3 +289,7 @@ double Mesh::triangleArea(int n1, int n2, int n3) const{
 
 };
 
+Mesh::~Mesh(){
+
+
+};

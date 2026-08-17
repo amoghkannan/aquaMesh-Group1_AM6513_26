@@ -8,6 +8,7 @@
 //------------------------------------------------------------//
 
 #include <iostream>
+#include <memory>
 
 #include "Point.h"
 #include "Line.h"
@@ -150,22 +151,22 @@ int main()
     // First Cell
     //--------------------------------------------------------
 
-    test.expectEqual(mesh.cells[0].nodeIDs[0],
+    test.expectEqual(mesh.cells[0]->nodeIDs[0],
                      0,
                      1e-12,
                      "Cell0 Node0");
 
-    test.expectEqual(mesh.cells[0].nodeIDs[1],
+    test.expectEqual(mesh.cells[0]->nodeIDs[1],
                      1,
                      1e-12,
                      "Cell0 Node1");
 
-    test.expectEqual(mesh.cells[0].nodeIDs[2],
+    test.expectEqual(mesh.cells[0]->nodeIDs[2],
                      22,
                      1e-12,
                      "Cell0 Node2");
 
-    test.expectEqual(mesh.cells[0].nodeIDs[3],
+    test.expectEqual(mesh.cells[0]->nodeIDs[3],
                      21,
                      1e-12,
                      "Cell0 Node3");
@@ -174,9 +175,9 @@ int main()
     // Last Cell
     //--------------------------------------------------------
 
-    Cell last = mesh.cells.back();
+    std::shared_ptr<Cell> last = mesh.cells.back();
 
-    test.expectTrue(last.id == 199,
+    test.expectTrue(last->id == 199,
                     "Last Cell ID");
 
     //--------------------------------------------------------

@@ -4,6 +4,8 @@ Compiler instruction: g++ 05_TriangularMeshExport.cpp src/*.cpp -Iinclude -std=c
 
 #include <iostream>
 
+#include"Test.h"
+
 #include "Point.h"
 #include "Line.h"
 #include "Surface.h"
@@ -14,9 +16,8 @@ Compiler instruction: g++ 05_TriangularMeshExport.cpp src/*.cpp -Iinclude -std=c
 
 int main()
 {
-    std::cout << "==========================================" << std::endl;
-    std::cout << " Example 05 : Triangular Mesh Export" << std::endl;
-    std::cout << "==========================================" << std::endl;
+
+    Test test;
 
     Point p0(0,0.0,0.0);
     Point p1(1,4.0,0.0);
@@ -36,16 +37,6 @@ int main()
     rectangle.addBoundary(&l3);
 
     //------------------------------------------------------------
-    // Print Geometry
-    //------------------------------------------------------------
-
-    std::cout << "\n";
-    std::cout << "Geometry Created" << std::endl;
-    std::cout << "----------------" << std::endl;
-
-    rectangle.print();
-
-    //------------------------------------------------------------
     // Step 2 : Generate Cartesian Mesh
     //------------------------------------------------------------
 
@@ -54,27 +45,76 @@ int main()
     mesh.generateCartesian
     (
         rectangle,
-        200,     // Nx
-        100      // Ny
+        20,     // Nx
+        10      // Ny
     );
+
+    int numberOfCells=mesh.getNumberOfCells();
+
+    int temp;
+    //Mess up node ordering, to check whether triangles still made properly
+    temp=mesh.cells[79]->nodeIDs[2];
+    mesh.cells[79]->nodeIDs[2]=mesh.cells[79]->nodeIDs[1];
+    mesh.cells[79]->nodeIDs[1]=temp;
+    int n1,n2,n3,n4;
+    n1=mesh.cells[79]->nodeIDs[0];
+    n2=mesh.cells[79]->nodeIDs[1];
+    n3=mesh.cells[79]->nodeIDs[2];
+    n4=mesh.cells[79]->nodeIDs[3];
 
     mesh.splitIntoTriangles();
-    //------------------------------------------------------------
-    // Step 3 : Print Mesh Statistics
-    //------------------------------------------------------------
+   
+    int numberOfTriangles=mesh.getNumberOfCells();
 
-    MeshStatistics::print(mesh);
+    //For cell with messed up ordering, are correct triangles still found?
+    test.expectTrue(mesh.cells[79]->nodeIDs[0]==n1 &&
+                    mesh.cells[79]->nodeIDs[1]==n2 &&
+                    mesh.cells[79]->nodeIDs[2]==n3,
+                     "Correct triangles with mangled node ordering");
 
-    //------------------------------------------------------------
-    // Step 4 : Export Mesh
-    //------------------------------------------------------------
+    test.expectTrue(mesh.cells[79+numberOfCells]->nodeIDs[0]==n1 &&
+                    mesh.cells[79+numberOfCells]->nodeIDs[1]==n2 &&
+                    mesh.cells[79+numberOfCells]->nodeIDs[2]==n4,
+                     "Correct triangles with mangled node ordering");
 
-    MeshWriter::writeVTKTriangle
-    (
-        mesh,
-        "triangularSplit.vtk"
-    );
-    return 0;
+    test.expectEqual(2*numberOfCells,
+                     numberOfTriangles,
+                     1E-12,
+                     "2 triangles per cell");
+
+    int wrong_triangles=0;
+    
+    for(auto triangle:mesh.cells){
+                if(triangle->nodeIDs[0]==triangle->nodeIDs[1] ||
+                   triangle->nodeIDs[0]==triangle->nodeIDs[2] ||
+                   triangle->nodeIDs[1]==triangle->nodeIDs[2])
+                   wrong_triangles=wrong_triangles+1;
+    };
+
+    test.expectEqual(wrong_triangles,
+                     0,
+                     1E-12,
+                     "Unique nodes for a triangle");
+
+    wrong_triangles=0;
+    
+    for(auto triangle:mesh.cells){
+                if(triangle->nodeIDs.size()!=3)
+                   wrong_triangles=wrong_triangles+1;
+    };
+
+    test.expectEqual(wrong_triangles,
+                     0,
+                     1E-12,
+                     "3 nodes for a triangle");
+
+
+    test.summary();
+
+    return test.success() ? 0 : 1;
+
+
+return 0;
 
 
 

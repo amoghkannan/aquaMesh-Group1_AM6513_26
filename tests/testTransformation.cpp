@@ -166,8 +166,8 @@ int main()
                      1e-12,
                      "Translation preserves cells");
 
-    test.expectEqual(rotated.cells[0].nodeIDs[0],
-                     original.cells[0].nodeIDs[0],
+    test.expectEqual(rotated.cells[0]->nodeIDs[0],
+                     original.cells[0]->nodeIDs[0],
                      1e-12,
                      "Connectivity preserved");
 

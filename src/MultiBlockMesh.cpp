@@ -60,9 +60,9 @@ void MultiBlockMesh::generate()
 
         for(auto cell : block.mesh.cells)
         {
-            cell.id = globalCellID++;
+            cell->id = globalCellID++;
 
-            for(auto& nodeID : cell.nodeIDs)
+            for(auto& nodeID : cell->nodeIDs)
             {
                 nodeID += nodeOffset;
             }
@@ -92,4 +92,10 @@ void MultiBlockMesh::generate()
     cout << "Cells : "
          << cells.size()
          << endl;
-}
+};
+
+MultiBlockMesh::~MultiBlockMesh(){
+
+};
+
+

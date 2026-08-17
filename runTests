@@ -25,6 +25,7 @@ compile_and_run testCartesianMesh
 compile_and_run testMultiBlock
 compile_and_run testTransformation
 compile_and_run testCoordinateMapping
+compile_and_run testTriangularSplit
 
 echo
 echo "==============================="

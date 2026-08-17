@@ -149,12 +149,12 @@ int main()
                      1e-12,
                      "Last Node ID");
 
-    test.expectEqual(mesh.cells.front().id,
+    test.expectEqual(mesh.cells.front()->id,
                      0,
                      1e-12,
                      "First Cell ID");
 
-    test.expectEqual(mesh.cells.back().id,
+    test.expectEqual(mesh.cells.back()->id,
                      399,
                      1e-12,
                      "Last Cell ID");

@@ -33,7 +33,7 @@ void MeshWriter::writeVTK
     //--------------------------------------------------------
 
     file << "# vtk DataFile Version 3.0\n";
-    file << "Cartesian Mesh\n";
+    file << "AquaMesh\n";
     file << "ASCII\n";
     file << "DATASET UNSTRUCTURED_GRID\n\n";
 
@@ -63,17 +63,20 @@ void MeshWriter::writeVTK
 
     int nCells = mesh.getNumberOfCells();
 
+    int nNodesPerCell=mesh.isTriangle?3:4;
+    int cellType=mesh.isTriangle?5:9;
+
     file << "CELLS "
          << nCells
          << " "
-         << nCells*5
+         << nCells*(nNodesPerCell+1)
          << "\n";
 
     for(const auto& cell : mesh.cells)
     {
-        file << "4 ";
+        file << nNodesPerCell<<" ";
 
-        for(int node : cell.nodeIDs)
+        for(int node : cell->nodeIDs)
         {
             file << node << " ";
         }
@@ -93,7 +96,7 @@ void MeshWriter::writeVTK
 
     for(int i=0;i<nCells;i++)
     {
-        file << "9\n";
+        file << cellType<<std::endl;
     }
 
     file.close();
@@ -103,93 +106,3 @@ void MeshWriter::writeVTK
          << filename
          << endl;
 };
-
-void MeshWriter::writeVTKTriangle
-(
-    const Mesh& mesh,
-    const string& filename
-)
-{
-    ofstream file(filename);
-
-    if(!file.is_open())
-    {
-        cout << "Error opening " << filename << endl;
-        return;
-    }
-
-    //--------------------------------------------------------
-    // Header
-    //--------------------------------------------------------
-
-    file << "# vtk DataFile Version 3.0\n";
-    file << "Triangular Mesh\n";
-    file << "ASCII\n";
-    file << "DATASET UNSTRUCTURED_GRID\n\n";
-
-    //--------------------------------------------------------
-    // Points
-    //--------------------------------------------------------
-
-    file << "POINTS "
-         << mesh.getNumberOfNodes()
-         << " float\n";
-
-    for(const auto& node : mesh.nodes)
-    {
-        file << node.x
-             << " "
-             << node.y
-             << " "
-             << 0.0
-             << "\n";
-    }
-
-    file << "\n";
-
-    //--------------------------------------------------------
-    // Cells
-    //--------------------------------------------------------
-    
-    int nTriangles = mesh.getNumberOfTriangles();
-
-    file << "CELLS "
-         << nTriangles
-         << " "
-         << nTriangles*4
-         << "\n";
-
-    for(const auto& triangle : mesh.triangles)
-    {
-        file << "3 ";
-
-        for(int node : triangle.nodeIDs)
-        {
-            file << node << " ";
-        }
-
-        file << "\n";
-    }
-
-    file << "\n";
-
-    //--------------------------------------------------------
-    // Cell Types
-    //--------------------------------------------------------
-
-    file << "CELL_TYPES "
-         << nTriangles
-         << "\n";
-
-    for(int i=0;i<nTriangles;i++)
-    {
-        file << "5\n";
-    }
-
-    file.close();
-
-    cout << "\n";
-    cout << "Mesh exported to "
-         << filename
-         << endl;
-}

@@ -164,8 +164,8 @@ int main()
 
     test.expectEqual
     (
-        polar.cells[0].nodeIDs[0],
-        original.cells[0].nodeIDs[0],
+        polar.cells[0]->nodeIDs[0],
+        original.cells[0]->nodeIDs[0],
         1e-12,
         "Connectivity preserved"
     );

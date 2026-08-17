@@ -79,7 +79,7 @@ void MeshStatistics::print(const Mesh& mesh)
     // Structured Mesh Information
     //--------------------------------------------------------
 
-    if(mesh.Nx > 0 && mesh.Ny > 0)
+    if(mesh.Nx > 0 && mesh.Ny > 0 && !mesh.isTriangle)
     {
         cout << "\nStructured Mesh\n";
         cout << "---------------\n";
@@ -108,7 +108,7 @@ void MeshStatistics::print(const Mesh& mesh)
              << mesh.dy
              << endl;
     }
-    else
+    else if(!mesh.isTriangle)
     {
         cout << "\nStructured Mesh\n";
         cout << "---------------\n";

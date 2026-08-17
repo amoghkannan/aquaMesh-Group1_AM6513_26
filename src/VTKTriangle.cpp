@@ -3,10 +3,7 @@
 #include<iostream>
 #include<fstream>
 
-VTKTriangle::VTKTriangle(){
-
-        id=-1;
-};
+VTKTriangle::VTKTriangle(): Cell() {};
 
 VTKTriangle::VTKTriangle
 (

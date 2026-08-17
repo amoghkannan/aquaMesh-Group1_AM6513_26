@@ -2,6 +2,7 @@
 #define MESH_H
 
 #include <vector>
+#include<memory>
 
 #include "Point.h"
 #include "Cell.h"
@@ -17,8 +18,8 @@ public:
     //--------------------------------------------------
 
     std::vector<Point> nodes;
-    std::vector<Cell> cells;
-    std::vector<VTKTriangle> triangles;
+    std::vector<std::shared_ptr<Cell>> cells;
+    bool isTriangle; //After triangle cell split, will be true
 
     double xmin;
     double xmax;
@@ -57,11 +58,11 @@ public:
 
     int getNumberOfCells() const;
 
-    int getNumberOfTriangles() const;
-
     void splitIntoTriangles();
     double triangleArea(int n1, int n2, int n3) const;
     //Needed to split cells into triangles 
+
+    ~Mesh(); //Destructor
 
 protected:
 
