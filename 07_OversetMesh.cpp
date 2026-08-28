@@ -48,14 +48,15 @@ int main(){
 
         Block fineBlock(1,fineSurface,50,50);
 
-	oversetMesh.addBlock(coarseBlock);
+
 	oversetMesh.addBlock(fineBlock);
+	oversetMesh.addBlock(coarseBlock);
 
         oversetMesh.generate();
 
 	OversetConfig config;
 	config.overset=true;
-        config.fineMeshIdx=1;
+        config.fineMeshIdx=0;
 	config.motionType="circular";
 	config.vx=0.5;
 	config.vy=0.2;
