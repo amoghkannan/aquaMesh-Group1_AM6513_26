@@ -9,6 +9,7 @@ public:
     int id;
     double x;
     double y;
+    double z;
 
     Point();
     Point(int id, double x, double y);

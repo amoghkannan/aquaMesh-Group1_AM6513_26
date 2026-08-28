@@ -139,6 +139,7 @@ void MultiBlockMesh::generate(const OversetConfig& config, double dt){
                 for(int i=0;i<meshNodeCount;i++){
                         nodes[i+globalNodeOffset].x = blocks[config.fineMeshIdx].mesh.nodes[i].x;
                         nodes[i+globalNodeOffset].y = blocks[config.fineMeshIdx].mesh.nodes[i].y;
+                        nodes[i+globalNodeOffset].z = 0.1; 
                 };
         };
 

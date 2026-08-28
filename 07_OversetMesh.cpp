@@ -73,7 +73,7 @@ int main(){
                 oversetMesh.generate(config,dt);
 		std::string filename="oversetMesh_frames/output_frame_"+std::to_string(frame)+".vtk";
 		MeshWriter::writeVTK(oversetMesh,filename);
-		std::cout<<"Generated and saved:"<<filename<<"at t="<<t<<"\n";
+		std::cout<<"Generated and saved:"<<filename<<" at t="<<t<<"\n";
 
       }
       std::cout<<"Animation files generated\n";

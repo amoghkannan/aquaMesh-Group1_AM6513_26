@@ -51,7 +51,7 @@ void MeshWriter::writeVTK
              << " "
              << node.y
              << " "
-             << 0.0
+             << node.z
              << "\n";
     }
 
