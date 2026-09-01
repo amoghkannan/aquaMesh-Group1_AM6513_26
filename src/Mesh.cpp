@@ -158,6 +158,8 @@ void Mesh::generateCells()
             id++;
         }
     }
+
+    computeAreas();
 }
 
 
@@ -318,5 +320,52 @@ Mesh::~Mesh(){
                 delete cell;
                 cell=nullptr;
         };
+
+};
+
+double Mesh::shoelaceArea(std::vector<int> nodesIn){
+        nodesIn.push_back(nodesIn[0]);
+        int N=nodesIn.size();
+
+        double ans=0.0;
+
+        for(int n=0;n<N-1;n++){ 
+                ans=ans+nodes[nodesIn[n]].x*nodes[nodesIn[n+1]].y;
+                ans=ans-nodes[nodesIn[n]].y*nodes[nodesIn[n+1]].x;
+        };
+
+        ans=ans*0.5;
+        return ans;
+};
+
+void Mesh::computeAreas(){
+
+    std::vector<int> nodeIDs;
+    double area;
+    A.clear();
+
+    for(auto cell:cells)
+    {
+       nodeIDs=cell->nodeIDs;
+       area=shoelaceArea(nodeIDs);
+       A.push_back(area); 
+    }
+
+};
+
+void Mesh::computeJacobians(){
+
+    std::vector<int> nodeIDs;
+    double area;
+    J.clear();
+
+    int cellID=0;
+
+    for(auto cell:cells)
+    {
+       nodeIDs=cell->nodeIDs;
+       area=shoelaceArea(nodeIDs);
+       J.push_back(area/A[cellID]); 
+    };
 
 };

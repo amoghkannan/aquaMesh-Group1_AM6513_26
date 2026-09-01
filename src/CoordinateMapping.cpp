@@ -97,3 +97,24 @@ void CoordinateMapping::polar
             r*sin(theta);
     }
 }
+
+void CoordinateMapping::genericCurvilinear(Mesh& mesh, std::pair<double,double>(*transformation)(double,double)){
+    
+    std::pair<double,double> coordNew;
+  
+    for(auto& node : mesh.nodes)
+    {
+        double xi = node.x;
+
+        double eta = node.y;
+
+        coordNew=transformation(xi,eta);
+
+        node.x=coordNew.first;
+        node.y=coordNew.second;
+
+    }
+
+    mesh.computeJacobians();
+
+};

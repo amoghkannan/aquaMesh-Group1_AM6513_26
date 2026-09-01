@@ -44,6 +44,12 @@ public:
         double rOuter
     );
 
+    static void genericCurvilinear
+    (
+      Mesh& mesh,
+      std::pair<double,double> (*transformation)(double, double)
+    );
+
 };
 
 #endif

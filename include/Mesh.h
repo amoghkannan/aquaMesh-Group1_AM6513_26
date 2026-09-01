@@ -63,6 +63,12 @@ public:
     double triangleArea(int n1, int n2, int n3) const;
     //Needed to split cells into triangles 
 
+    std::vector<double> J; //Cell Jacobians
+    std::vector<double> A; //Cell areas
+    double shoelaceArea(std::vector<int>);
+    void computeAreas();
+    void computeJacobians();
+        
     ~Mesh(); //Destructor
 
 protected:
