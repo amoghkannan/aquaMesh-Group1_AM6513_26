@@ -381,7 +381,7 @@ void Mesh::computeJacobians(){
        
        if( jacob<=0.0 && invalcell==-1)
        {
-		invalcell=cell->id;
+		invalcell=cellID;
 		invalj=jacob;
 		
 		for (int n:nodeIDs)
