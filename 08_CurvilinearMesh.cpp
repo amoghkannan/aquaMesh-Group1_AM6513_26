@@ -1,6 +1,7 @@
 /*
 Compiling Instruction: g++ 08_CurvilinearMesh.cpp src/*.cpp -Iinclude -std=c++17 -o curvilinearMesh && ./curvilinearMesh
 */
+#define _USE_MATH_DEFINES
 #include <iostream>
 #include<cmath>
 
@@ -28,10 +29,16 @@ std::pair<double,double>transform2(double xi, double eta){
         return ans;
 };
 
-int main()
+void runCase
+(
+	const std::string& caseName,
+	std::pair<double,double>(*transform)(double,double),
+	const std::string& outputFile
+)
+
 {
     std::cout << "==========================================" << std::endl;
-    std::cout << " Example 08 : Curvilinear Mesh Generation"  << std::endl;
+    std::cout << " "<< caseName << std::endl;
     std::cout << "==========================================" << std::endl;
 
     //------------------------------------------------------------
@@ -78,21 +85,25 @@ int main()
         100      // Ny
     );
 
-     CoordinateMapping::genericCurvilinear(mesh,transform1);
-    //------------------------------------------------------------
-    // Step 3 : Print Mesh Statistics
-    //------------------------------------------------------------
+    try
+    {
+         CoordinateMapping::genericCurvilinear(mesh,transform);
+	 std::cout<<"Mapping is valid: all cells have positive Jacobian.\n";
+	 MeshStatistics::print(mesh);
+	 MeshWriter::writeVTK(mesh,outputFile,true);
+	 std::cout<<"Mesh exported to"<<outputFile<<std::endl;
+    }
+    catch(const std::exception& e)
+    {
+	std::cout<<"\nMesh generatio failed:"<<e.what()<<std::endl;
+	MeshWriter::writeVTK(mesh,"invalidRegion_"+outputFile,true);
+	std::cout<<"Problematic region written to invalidRegion_"<< outputFile <<"(colour by 	'Jacobian')"<<std::endl;
+    }
+}
 
-    MeshStatistics::print(mesh);
-
-    //------------------------------------------------------------
-    // Step 4 : Export Mesh
-    //------------------------------------------------------------
-
-    MeshWriter::writeVTK
-    (
-        mesh,
-        "curvilinearMesh.vtk"
-    );
-    return 0;
+int main()
+{
+	runCase("Transform 1 : y = eta*(1+A*sin(pi*xi))", transform1, "curvilinearMesh_t1.vtk");
+        runCase("Transform 2 : x = xi+B*eta*(1-eta), y = eta+C*sin(pi*xi)*eta", transform2, "curvilinearMesh_t2.vtk");
+	return 0;
 }

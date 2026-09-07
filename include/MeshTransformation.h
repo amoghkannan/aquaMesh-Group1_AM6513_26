@@ -2,6 +2,7 @@
 #define MESHTRANSFORMATION_H
 
 #include "Mesh.h"
+#define _USE_MATH_DEFINES
 
 class MeshTransformation
 {

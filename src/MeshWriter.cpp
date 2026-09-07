@@ -17,7 +17,8 @@ using namespace std;
 void MeshWriter::writeVTK
 (
     const Mesh& mesh,
-    const string& filename
+    const string& filename,
+    bool writejacobianfield
 )
 {
     ofstream file(filename);
@@ -99,6 +100,18 @@ void MeshWriter::writeVTK
         file << cellType<<std::endl;
     }
 
+
+    if (writejacobianfield)
+    {
+	file<<"\n";
+	file<<"CELL_DATA "<<nCells<<"\n";
+	file<<"SCALARS Jacobian float 1\n";
+	file<<"LOOKUP_TABLE default\n";
+	for(double jacob:mesh.J)
+	{
+		file<<jacob<<"\n";
+	}
+    }
     file.close();
 
     cout << "\n";

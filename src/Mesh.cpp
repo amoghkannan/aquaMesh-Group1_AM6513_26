@@ -20,7 +20,7 @@
 
 #include <iostream>
 #include <algorithm>
-
+#include<stdexcept>
 using namespace std;
 
 
@@ -360,12 +360,40 @@ void Mesh::computeJacobians(){
     J.clear();
 
     int cellID=0;
+    int invalcell=-1;//initializing as -1 
+    double invalj=0.0;
+    double invalx=0.0;
+    double invaly=0.0;
 
     for(auto cell:cells)
     {
        nodeIDs=cell->nodeIDs;
        area=shoelaceArea(nodeIDs);
-       J.push_back(area/A[cellID]); 
+       double jacob=area/A[cellID];
+       J.push_back(jacob); 
+       
+       if( jacob<=0.0 && invalcell==-1)
+       {
+		invalcell=cell->id;
+		invalj=jacob;
+		
+		for (int n:nodeIDs)
+		{
+			invalx +=nodes[n].x;
+			invaly +=nodes[n].y;
+		}
+		invalx /=nodeIDs.size();
+		invaly /=nodeIDs.size();
+	}
     };
+    if (invalcell!=-1)
+    {
+ 	cout<<"\nInvalid cell found!\n";
+	cout<<"Cell ID:"<<invalcell<<"\n";
+	cout<<"Jacobian:"<<invalj<<"\n";
+	cout<<"Location:("<<invalx<<","<<invaly<<")\n";
+	throw runtime_error("Negative or zero volume cell detected");
+     
+    }
 
 };
