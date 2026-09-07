@@ -15,9 +15,9 @@ Compiling Instruction: g++ 08_CurvilinearMesh.cpp src/*.cpp -Iinclude -std=c++17
 #include "MeshStatistics.h"
 #include "MeshWriter.h"
 
-double A=1.0;
-double B=1.0;
-double C=1.0;
+double A=0.5;
+double B=0.5;
+double C=0.5;
 
 std::pair<double,double>transform1(double xi, double eta){
         std::pair<double,double> ans={xi,eta*(1.0+A*sin(M_PI*xi))};
@@ -81,8 +81,8 @@ void runCase
     mesh.generateCartesian
     (
         rectangle,
-        200,     // Nx
-        100      // Ny
+        20,     // Nx
+        10      // Ny
     );
 
     try
@@ -91,7 +91,6 @@ void runCase
 	 std::cout<<"Mapping is valid: all cells have positive Jacobian.\n";
 	 MeshStatistics::print(mesh);
 	 MeshWriter::writeVTK(mesh,outputFile,true);
-	 std::cout<<"Mesh exported to"<<outputFile<<std::endl;
     }
     catch(const std::exception& e)
     {

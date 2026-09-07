@@ -392,6 +392,7 @@ void Mesh::computeJacobians(){
 		invalx /=nodeIDs.size();
 		invaly /=nodeIDs.size();
 	}
+        cellID++;
     };
     if (invalcell!=-1)
     {
