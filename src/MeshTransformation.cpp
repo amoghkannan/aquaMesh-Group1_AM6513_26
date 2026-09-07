@@ -50,6 +50,9 @@ void MeshTransformation::scale
         node.x *= sx;
         node.y *= sy;
     }
+
+    mesh.computeJacobians();
+        
 }
 
 //------------------------------------------------------------//
@@ -98,6 +101,9 @@ void MeshTransformation::shear
         node.x = x + kx*y;
         node.y = y + ky*x;
     }
+
+    mesh.computeJacobians();
+
 }
 
 //------------------------------------------------------------//
@@ -118,4 +124,7 @@ void MeshTransformation::sinusoidal
         node.y += amplitude *
                   sin(2.0*pi*node.x/wavelength);
     }
+
+    mesh.computeJacobians();
+
 }

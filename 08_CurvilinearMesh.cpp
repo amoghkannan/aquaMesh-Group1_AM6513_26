@@ -95,7 +95,7 @@ void runCase
     }
     catch(const std::exception& e)
     {
-	std::cout<<"\nMesh generatio failed:"<<e.what()<<std::endl;
+	std::cout<<"\nMesh generation failed:"<<e.what()<<std::endl;
 	MeshWriter::writeVTK(mesh,"invalidRegion_"+outputFile,true);
 	std::cout<<"Problematic region written to invalidRegion_"<< outputFile <<"(colour by 	'Jacobian')"<<std::endl;
     }

@@ -19,7 +19,10 @@ public:
 
     std::vector<Point> nodes;
     std::vector<Cell*> cells;
-    bool isTriangle; //After triangle cell split, will be true
+    bool isTriangle=false; //After triangle cell split, will be true
+    bool isCurvilinear=false; //Becomes true after curvilinear transformation, since coordinates will
+                              //no longer be valid xi-eta space coordinates, and user should not be able
+                              // to perform another transformation on the same mesh
 
     double xmin;
     double xmax;

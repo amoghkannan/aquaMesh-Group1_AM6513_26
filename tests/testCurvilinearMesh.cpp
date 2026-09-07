@@ -90,7 +90,24 @@ int main()
 	(
 		content.find("SCALARS Jacobian")!=string::npos,"Visualization file contains jacobian field"
 	);
-	test.summary();
+
+        double A_OG=mesh4.A[2500];
+        double J_OG=mesh4.J[4500];
+
+        CoordinateMapping::trapezoidal(mesh4,1.0);
+	test.expectEqual(mesh4.A[2500],A_OG,1e-12,"Trapezoidal transform not repeatable on transformed mesh");
+
+        CoordinateMapping::sinusoidal(mesh4,1.0);
+	test.expectEqual(mesh4.A[2500],A_OG,1e-12,"Sinusoidal transform not repeatable on transformed mesh");
+
+        CoordinateMapping::polar(mesh4,1.0,2.0);
+	test.expectEqual(mesh4.A[2500],A_OG,1e-12,"Polar transform not repeatable on transformed mesh");
+
+	B_val=1.0;C_val=1.0;
+        CoordinateMapping::genericCurvilinear(mesh4,transform2);
+	test.expectEqual(mesh4.A[2500],A_OG,1e-12,"Generic curvilinear transform not repeatable on transformed mesh");
+
+        test.summary();
 	return test.success()? 0 :1;
 }
 

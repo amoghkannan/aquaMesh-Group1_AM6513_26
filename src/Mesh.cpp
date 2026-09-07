@@ -43,13 +43,16 @@ Mesh::Mesh()
     dy = 0.0;
 
     isTriangle=false;
+    isCurvilinear=false;
+
 }
 
 Mesh::Mesh(const Mesh& meshOG){
         nodes = meshOG.nodes;
         
         isTriangle = meshOG.isTriangle;
-        
+        isCurvilinear = meshOG.isCurvilinear;
+
         xmin = meshOG.xmin;
         xmax = meshOG.xmax;
         ymin = meshOG.ymin;
@@ -67,6 +70,9 @@ Mesh::Mesh(const Mesh& meshOG){
                 cells[i] = new Cell;
                 *cells[i]= *meshOG.cells[i];
         };
+
+        J = meshOG.J;
+        A = meshOG.A;
 };
 
 //------------------------------------------------------------//
@@ -370,6 +376,7 @@ void Mesh::computeJacobians(){
        nodeIDs=cell->nodeIDs;
        area=shoelaceArea(nodeIDs);
        double jacob=area/A[cellID];
+       A[cellID]=area;
        J.push_back(jacob); 
        
        if( jacob<=0.0 && invalcell==-1)

@@ -23,6 +23,11 @@ void CoordinateMapping::trapezoidal
     double topScale
 )
 {
+    if(mesh.isCurvilinear){
+        std::cout<<"Warning: Mesh already transformed, no change"<<std::endl;
+        return;
+    };
+
     double ymin = mesh.ymin;
     double ymax = mesh.ymax;
 
@@ -32,6 +37,11 @@ void CoordinateMapping::trapezoidal
 
         node.x *= (1.0 + eta*(topScale-1.0));
     }
+
+    mesh.isCurvilinear=true;
+
+    mesh.computeJacobians();
+
 }
 
 //------------------------------------------------------------//
@@ -44,6 +54,11 @@ void CoordinateMapping::sinusoidal
     double amplitude
 )
 {
+    if(mesh.isCurvilinear){
+        std::cout<<"Warning: Mesh already transformed, no change"<<std::endl;
+        return;
+    };
+
     const double pi = acos(-1.0);
 
     double xmin = mesh.xmin;
@@ -56,6 +71,11 @@ void CoordinateMapping::sinusoidal
         node.y += amplitude*
                   sin(2.0*pi*(node.x-xmin)/L);
     }
+
+    mesh.isCurvilinear=true;
+
+    mesh.computeJacobians();
+
 }
 
 //------------------------------------------------------------//
@@ -69,6 +89,11 @@ void CoordinateMapping::polar
     double rOuter
 )
 {
+    if(mesh.isCurvilinear){
+        std::cout<<"Warning: Mesh already transformed, no change"<<std::endl;
+        return;
+    };
+
     double xmin = mesh.xmin;
     double xmax = mesh.xmax;
 
@@ -84,8 +109,8 @@ void CoordinateMapping::polar
             (node.y-ymin)/(ymax-ymin);
 
         double r =
-            rInner +
-            eta*(rOuter-rInner);
+            rOuter +
+            eta*(-rOuter+rInner);
 
         double theta =
             xi*2.0*acos(-1.0);
@@ -96,10 +121,20 @@ void CoordinateMapping::polar
         node.y =
             r*sin(theta);
     }
+
+    mesh.isCurvilinear=true;
+
+    mesh.computeJacobians();
+
 }
 
 void CoordinateMapping::genericCurvilinear(Mesh& mesh, std::pair<double,double>(*transformation)(double,double)){
-    
+   
+    if(mesh.isCurvilinear){
+        std::cout<<"Warning: Mesh already transformed, no change"<<std::endl;
+        return;
+    };
+
     std::pair<double,double> coordNew;
   
     for(auto& node : mesh.nodes)
@@ -115,6 +150,8 @@ void CoordinateMapping::genericCurvilinear(Mesh& mesh, std::pair<double,double>(
 
     }
 
+    mesh.isCurvilinear=true;
+    
     mesh.computeJacobians();
 
 };
